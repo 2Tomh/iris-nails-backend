@@ -33,7 +33,8 @@ router.post("/login", async (req, res) => {
     if (isPassEqual) {
 
         const token = jwt.sign({
-            userId: user._id
+            userId: user._id,
+            isAdmin:user.isAdmin
         },
             process.env.SECRET_TOKEN, {
             expiresIn: '1h'

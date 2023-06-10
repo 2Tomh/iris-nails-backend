@@ -1,22 +1,31 @@
-const jwt = require("jsonwebtoken")
+const jwt = require("jsonwebtoken");
+const User = require("../schemas/userSchema");
+
 const verifyToken = (req, res, next) => {
     const token = req.headers?.authorization?.replace('Bearer ', "");
 
     if(!token){
-            return res.status(404).send();
+            return res.status(401).send();
     }
 
      jwt.verify(token, process.env.SECRET_TOKEN, (err, result) => {
 
-        console.log(err, "$$")
         if(err){
             return res.status(403).send();
         }
 
-        console.log(result, "####" );
+        req.userId = result.userId;
+        next();
     });
 
-    // console.log(isVerified, "%%%")
 }
 
-module.exports = verifyToken;
+const verifyAdmin = async(req, res, next) => {
+    const user = await User.findById(req.userId);
+
+    if(!user.isAdmin) return res.status(403).send();
+
+    next();
+}
+
+module.exports = {verifyToken, verifyAdmin};
