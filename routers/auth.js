@@ -12,9 +12,13 @@ router.post("/signup", async (req, res) => {
     }
 
     const user = new User({ username: req.body.username, password: req.body.password, address: req.body.address, mail: req.body.mail, phoneNumber: req.body.phoneNumber });
-
-    await user.save();
-    res.status(200).send("Signed up succesfully")
+    try {
+        
+        await user.save();
+        res.status(200).send("Signed up succesfully")
+    } catch (error) {
+        res.status(402).send("Email is already registered");
+    }
 })
 
 router.post("/login", async (req, res) => {
